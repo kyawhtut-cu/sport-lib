@@ -1,5 +1,6 @@
 package com.kyawhtut.sport.volasport
 
+import com.kyawhtut.sport.Utils
 import com.kyawhtut.sport.volasport.`object`.VolaSportModel
 import com.kyawhtut.sport.volasport.`object`.VolaSportRequest
 import com.kyawhtut.sport.volasport.`object`.VolaSportType
@@ -31,7 +32,9 @@ object VolaSport {
         return withContext(Dispatchers.IO) {
             val agent = JSONObject(
                 Jsoup.connect(BASE_URL.format("userAgents.php"))
-                    .ignoreContentType(true).get().body().text()
+                    .ignoreContentType(true)
+                    .sslSocketFactory(Utils.socketFactory)
+                    .get().body().text()
             ).getJSONArray("userAgents")
             if (agent.length() == 0) throw Exception("User agent not found.") else agent.getString(0)
         }
@@ -40,9 +43,12 @@ object VolaSport {
     suspend fun getVolaSport(): List<VolaSportModel> {
         return withContext(Dispatchers.IO) {
             try {
-                val response =
-                    Jsoup.connect(BASE_URL.format("s1.php?${getToken()}")).get()
-                val newsResponse = Jsoup.connect(BASE_URL.format("news.php?${getToken()}")).get()
+                val response = Jsoup.connect(BASE_URL.format("s1.php?${getToken()}"))
+                    .sslSocketFactory(Utils.socketFactory)
+                    .get()
+                val newsResponse = Jsoup.connect(BASE_URL.format("news.php?${getToken()}"))
+                    .sslSocketFactory(Utils.socketFactory)
+                    .get()
                 parseVolaSport(response) + parseVolaNew(newsResponse)
             } catch (e: Exception) {
                 throw e
@@ -53,7 +59,9 @@ object VolaSport {
     suspend fun parsePlayURL(url: String): String {
         return withContext(Dispatchers.IO) {
             try {
-                val response = Jsoup.connect(url).followRedirects(false).execute()
+                val response = Jsoup.connect(url).followRedirects(false)
+                    .sslSocketFactory(Utils.socketFactory)
+                    .execute()
                 response.header("location")
             } catch (e: Exception) {
                 throw e
@@ -64,8 +72,9 @@ object VolaSport {
     suspend fun getLivePlayLink(url: String): List<Pair<String, String>> {
         return withContext(Dispatchers.IO) {
             try {
-                val response =
-                    Jsoup.connect(url + "&" + getToken()).get()
+                val response = Jsoup.connect(url + "&" + getToken())
+                    .sslSocketFactory(Utils.socketFactory)
+                    .get()
                 response.select("a").map { element ->
                     element.text() to BASE_URL.format(
                         element.attr(

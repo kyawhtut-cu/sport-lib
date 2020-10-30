@@ -1,5 +1,6 @@
 package com.kyawhtut.sport.sport5
 
+import com.kyawhtut.sport.Utils
 import com.kyawhtut.sport.sport5.`object`.Sport5Model
 import com.kyawhtut.sport.sport5.`object`.Sport5Type
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +31,9 @@ object Sport5 {
     suspend fun getFootball(isExcludeUnLive: Boolean = false): List<Sport5Model> {
         return withContext(Dispatchers.IO) {
             try {
-                val football = Jsoup.connect("https://www.555sports.com/football").get()
+                val football = Jsoup.connect("https://www.555sports.com/football")
+                    .sslSocketFactory(Utils.socketFactory)
+                    .get()
                 parseData(football, Sport5Type.FOOTBALL, isExcludeUnLive)
             } catch (e: Exception) {
                 throw  e
@@ -41,7 +44,9 @@ object Sport5 {
     suspend fun getBasketball(isExcludeUnLive: Boolean = false): List<Sport5Model> {
         return withContext(Dispatchers.IO) {
             try {
-                val basketball = Jsoup.connect("https://www.555sports.com/basketball").get()
+                val basketball = Jsoup.connect("https://www.555sports.com/basketball")
+                    .sslSocketFactory(Utils.socketFactory)
+                    .get()
                 parseData(basketball, Sport5Type.BASKETBALL, isExcludeUnLive)
             } catch (e: Exception) {
                 throw  e
@@ -52,7 +57,9 @@ object Sport5 {
     suspend fun getTennis(isExcludeUnLive: Boolean = false): List<Sport5Model> {
         return withContext(Dispatchers.IO) {
             try {
-                val tennis = Jsoup.connect("https://www.555sports.com/tennis").get()
+                val tennis = Jsoup.connect("https://www.555sports.com/tennis")
+                    .sslSocketFactory(Utils.socketFactory)
+                    .get()
                 parseData(tennis, Sport5Type.TENNIS, isExcludeUnLive)
             } catch (e: Exception) {
                 throw  e
@@ -63,7 +70,9 @@ object Sport5 {
     suspend fun getESport(isExcludeUnLive: Boolean = false): List<Sport5Model> {
         return withContext(Dispatchers.IO) {
             try {
-                val esport = Jsoup.connect("https://www.555sports.com/esports").get()
+                val esport = Jsoup.connect("https://www.555sports.com/esports")
+                    .sslSocketFactory(Utils.socketFactory)
+                    .get()
                 parseData(esport, Sport5Type.ESPORTS, isExcludeUnLive)
             } catch (e: Exception) {
                 throw e
@@ -74,7 +83,9 @@ object Sport5 {
     suspend fun parseURL(sport5: Sport5Model): Sport5Model {
         return withContext(Dispatchers.IO) {
             try {
-                val doc = Jsoup.connect("https://www.555sports.com${sport5.playURL}").get()
+                val doc = Jsoup.connect("https://www.555sports.com${sport5.playURL}")
+                    .sslSocketFactory(Utils.socketFactory)
+                    .get()
                 with(doc.body().data()) {
                     this.substring(this.indexOf("m3u8Url:"), this.indexOf(",available"))
                         .split("\"")
@@ -82,7 +93,9 @@ object Sport5 {
                     if (this.size == 3) {
                         val url = Jsoup.connect(this@run[1].replace("\\u002F", "/")).header(
                             "Referer", "https://www.555sports.com/"
-                        ).ignoreContentType(true).get()
+                        ).ignoreContentType(true)
+                            .sslSocketFactory(Utils.socketFactory)
+                            .get()
                         var play: String
                         with(url.body().text()) {
                             play = this.substring(this.indexOf("https"))

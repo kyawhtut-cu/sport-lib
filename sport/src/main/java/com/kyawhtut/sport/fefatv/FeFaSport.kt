@@ -1,5 +1,6 @@
 package com.kyawhtut.sport.fefatv
 
+import com.kyawhtut.sport.Utils
 import com.kyawhtut.sport.fefatv.`object`.FeFaCategory
 import com.kyawhtut.sport.fefatv.`object`.FeFaModel
 import com.kyawhtut.sport.fefatv.`object`.FeFaRequest.Companion.getChannelByCID
@@ -24,6 +25,7 @@ object FeFaSport {
                     .userAgent("Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36")
                     .data("data", homeData)
                     .ignoreContentType(true)
+                    .sslSocketFactory(Utils.socketFactory)
                     .post()
                 val category = parseHome(home.body().text(), isLive)
                 category?.cID ?: throw Exception("Category Not Found.")
@@ -41,6 +43,7 @@ object FeFaSport {
                     .userAgent("Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36")
                     .data("data", getChannelByCID(categoryID, "$page"))
                     .ignoreContentType(true)
+                    .sslSocketFactory(Utils.socketFactory)
                     .post()
                 parseChannel(data.body().text())
             } catch (e: Exception) {
@@ -57,6 +60,7 @@ object FeFaSport {
                     .userAgent("Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36")
                     .data("data", getChannelByCID(categoryID, "$page"))
                     .ignoreContentType(true)
+                    .sslSocketFactory(Utils.socketFactory)
                     .post()
                 parseChannel(data.body().text())
             } catch (e: Exception) {
@@ -77,7 +81,9 @@ object FeFaSport {
                 val response = Jsoup.connect(url)
                     .userAgent("Burma-TV-Sport-Movies-Series-Streaming-Solution-Agent")
                     .ignoreContentType(true)
-                    .followRedirects(false).execute()
+                    .followRedirects(false)
+                    .sslSocketFactory(Utils.socketFactory)
+                    .execute()
                 response.header("location")
             } catch (e: Exception) {
                 throw e
