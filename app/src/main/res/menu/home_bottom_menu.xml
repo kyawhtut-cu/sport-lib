@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_all"
+        android:icon="@drawable/ic_live"
+        android:title="All"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_football"
+        android:icon="@drawable/ic_football"
+        android:title="Football"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_basketball"
+        android:icon="@drawable/ic_basketball"
+        android:title="Basketball"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_tennis"
+        android:icon="@drawable/ic_tennis"
+        android:title="Tennis"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_esport"
+        android:icon="@drawable/ic_esport"
+        android:title="E-Sport"
+        app:showAsAction="ifRoom" />
+</menu>
