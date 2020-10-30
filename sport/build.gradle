@@ -19,6 +19,7 @@ android {
 
         versionName androidGitVersion.name()
         versionCode androidGitVersion.code()
+        archivesBaseName = "sport"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -46,6 +47,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    libraryVariants.all { variant ->
+        variant.outputs.all { output ->
+            if (outputFileName.endsWith('.aar')) {
+                outputFileName = "${archivesBaseName}-${version}.aar"
+            }
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
