@@ -7,10 +7,30 @@
     tools:context=".MainActivity">
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_football_live_mm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Football Live MM"
+        app:layout_constraintBottom_toTopOf="@+id/btn_mm_football"
+        app:layout_constraintEnd_toEndOf="@+id/btn_fefatv"
+        app:layout_constraintStart_toStartOf="@+id/btn_fefatv" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_mm_football"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="MM Football"
+        app:layout_constraintBottom_toTopOf="@+id/btn_vola_sport"
+        app:layout_constraintEnd_toEndOf="@+id/btn_fefatv"
+        app:layout_constraintStart_toStartOf="@+id/btn_fefatv" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_vola_sport"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:text="Vola Sport"
         app:layout_constraintBottom_toTopOf="@+id/btn_sport5"
         app:layout_constraintEnd_toEndOf="@+id/btn_fefatv"
@@ -20,7 +40,7 @@
         android:id="@+id/btn_sport5"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:text="555 Sport"
         app:layout_constraintBottom_toTopOf="@+id/btn_fefatv"
         app:layout_constraintEnd_toEndOf="@+id/btn_fefatv"

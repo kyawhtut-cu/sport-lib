@@ -10,18 +10,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.kyawhtut.lib.VolaSportLinkDialog.Companion.showSportLink
 import com.kyawhtut.lib.`object`.PlayerObject
-import com.kyawhtut.sport.fefatv.FeFaSport
-import com.kyawhtut.sport.fefatv.`object`.FeFaModel
-import kotlinx.android.synthetic.main.activity_fefatv.*
-import kotlinx.android.synthetic.main.item_fefa_tv_category.view.*
+import com.kyawhtut.sport.mmfootball.MMFootball
+import com.kyawhtut.sport.mmfootball.`object`.MMFootballModel
+import kotlinx.android.synthetic.main.activity_mmfootball.*
+import kotlinx.android.synthetic.main.item_mm_football.view.*
 import kotlinx.coroutines.*
 
 /**
  * @author kyawhtut
  * @date 27/10/2020
  */
-class FeFaTvCategoryActivity : AppCompatActivity(R.layout.activity_fefatv) {
+class MMFootballActivity : AppCompatActivity(R.layout.activity_mmfootball) {
 
     private val job by lazy {
         Job()
@@ -37,48 +38,43 @@ class FeFaTvCategoryActivity : AppCompatActivity(R.layout.activity_fefatv) {
         Adapter()
     }
 
-    private var index: Int = 0
+    private var index: Int = R.id.action_live
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         rv_sport.apply {
-            layoutManager = GridLayoutManager(this@FeFaTvCategoryActivity, 2)
+            layoutManager = GridLayoutManager(this@MMFootballActivity, 3)
             adapter = sportAdapter
         }
 
-        getSportData(true)
+        getSportData()
 
         btn_menu.setOnNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.action_live -> {
-                    index = 0
-                    getSportData(true)
-                }
-                R.id.action_highlight -> {
-                    index = 1
-                    getSportData(false)
-                }
-            }
+            index = it.itemId
+            getSportData()
             return@setOnNavigationItemSelectedListener true
         }
     }
 
-    private fun getSportData(isLive: Boolean) {
+    private fun getSportData() {
         view_loading.visibility = View.VISIBLE
         io.launch {
             try {
-                val categoryList =
-                    if (isLive) FeFaSport.getLiveSport(1) else FeFaSport.getHighlightSport(1)
+                val sport = when (index) {
+                    R.id.action_live -> MMFootball.getLive()
+                    R.id.action_popular -> MMFootball.getPopular()
+                    else -> MMFootball.getHighlight()
+                }
                 withContext(main) {
-                    sportAdapter.list = categoryList
+                    sportAdapter.list = sport
                     view_loading.visibility = View.GONE
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 withContext(main) {
                     Toast.makeText(
-                        this@FeFaTvCategoryActivity,
+                        this@MMFootballActivity,
                         e.localizedMessage ?: "Unknown error found.",
                         Toast.LENGTH_LONG
                     ).show()
@@ -90,7 +86,7 @@ class FeFaTvCategoryActivity : AppCompatActivity(R.layout.activity_fefatv) {
 
     private inner class Adapter : RecyclerView.Adapter<ViewHolder>() {
 
-        var list: List<FeFaModel> = mutableListOf()
+        var list: List<MMFootballModel> = mutableListOf()
             set(value) {
                 field = value
                 notifyDataSetChanged()
@@ -99,9 +95,9 @@ class FeFaTvCategoryActivity : AppCompatActivity(R.layout.activity_fefatv) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(
                 LayoutInflater.from(
-                    this@FeFaTvCategoryActivity
+                    this@MMFootballActivity
                 ).inflate(
-                    R.layout.item_fefa_tv_category,
+                    R.layout.item_mm_football,
                     parent,
                     false
                 )
@@ -119,35 +115,43 @@ class FeFaTvCategoryActivity : AppCompatActivity(R.layout.activity_fefatv) {
 
     private inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(data: FeFaModel) {
+        fun bind(data: MMFootballModel) {
             itemView.setOnClickListener {
-                if (index == 1)
-                    startActivity(
-                        Intent(
-                            this@FeFaTvCategoryActivity,
-                            PlayerActivity::class.java
-                        ).apply {
-                            putExtra(
-                                PlayerActivity.extraPlayerObject,
-                                PlayerObject(data.channelTitle, data.channelPlayURL)
-                            )
-                        }
-                    )
-                else {
+                if (index == R.id.action_highlight) {
+                    showSportLink(
+                        data.title,
+                        data.url.filter { !it.contains("api/ip/check", true) }
+                            .mapIndexed { index, s ->
+                                "Link - ${index + 1}" to s
+                            }
+                    ) {
+                        startActivity(
+                            Intent(
+                                this@MMFootballActivity,
+                                PlayerActivity::class.java
+                            ).apply {
+                                putExtra(
+                                    PlayerActivity.extraPlayerObject,
+                                    PlayerObject(data.title, it)
+                                )
+                            }
+                        )
+                    }
+                } else {
                     view_loading.visibility = View.VISIBLE
                     io.launch {
                         try {
-                            val url = FeFaSport.parseLiveURL(data.channelPlayURL)
+                            val url = MMFootball.parseLiveURL(data)
                             withContext(main) {
                                 view_loading.visibility = View.GONE
                                 startActivity(
                                     Intent(
-                                        this@FeFaTvCategoryActivity,
+                                        this@MMFootballActivity,
                                         PlayerActivity::class.java
                                     ).apply {
                                         putExtra(
                                             PlayerActivity.extraPlayerObject,
-                                            PlayerObject(data.channelTitle, url)
+                                            PlayerObject(data.title, url)
                                         )
                                     }
                                 )
@@ -156,7 +160,7 @@ class FeFaTvCategoryActivity : AppCompatActivity(R.layout.activity_fefatv) {
                             e.printStackTrace()
                             withContext(main) {
                                 Toast.makeText(
-                                    this@FeFaTvCategoryActivity,
+                                    this@MMFootballActivity,
                                     e.localizedMessage ?: "Unknown error found.",
                                     Toast.LENGTH_LONG
                                 ).show()
@@ -167,9 +171,11 @@ class FeFaTvCategoryActivity : AppCompatActivity(R.layout.activity_fefatv) {
                 }
             }
             Glide.with(itemView.iv_category_image.context)
-                .load(data.channelThumbnail)
+                .load(data.image)
                 .into(itemView.iv_category_image)
-            itemView.tv_category_name.text = data.channelTitle
+            itemView.tv_category_name.text = data.title
+            itemView.tv_quality.text = data.quality
+            itemView.tv_time.text = data.time ?: ""
         }
     }
 

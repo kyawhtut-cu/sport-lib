@@ -25,5 +25,13 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         btn_vola_sport.setOnClickListener {
             startActivity(Intent(this, VolaSportActivity::class.java))
         }
+
+        btn_mm_football.setOnClickListener {
+            startActivity(Intent(this, MMFootballActivity::class.java))
+        }
+
+        btn_football_live_mm.setOnClickListener {
+            startActivity(Intent(this, FootballLiveMMActivity::class.java))
+        }
     }
 }

@@ -34,6 +34,16 @@
             android:screenOrientation="sensorPortrait" />
 
         <activity
+            android:name=".MMFootballActivity"
+            android:label="MM Football"
+            android:screenOrientation="sensorPortrait" />
+
+        <activity
+            android:name=".FootballLiveMMActivity"
+            android:label="MM Football"
+            android:screenOrientation="sensorPortrait" />
+
+        <activity
             android:name=".PlayerActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"

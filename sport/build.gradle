@@ -45,7 +45,7 @@ android {
     libraryVariants.all { variant ->
         variant.outputs.all { output ->
             if (outputFileName.endsWith('.aar')) {
-                outputFileName = "${archivesBaseName}-${version}.aar"
+                outputFileName = "${archivesBaseName}-${defaultConfig.versionName}.aar"
             }
         }
     }
