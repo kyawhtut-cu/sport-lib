@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import org.jsoup.Jsoup
+import java.net.URL
 
 /**
  * @author kyawhtut
@@ -20,10 +21,7 @@ object FootballLiveMM {
 
     suspend fun getLive(): List<FootballLiveModel> {
         return withContext(Dispatchers.IO) {
-            val response = Jsoup.connect(LIVE_URL)
-                .ignoreContentType(true)
-                .sslSocketFactory(Utils.socketFactory)
-                .get().body().text()
+            val response = URL(LIVE_URL).readText()
             val data = JSONObject(response).getJSONArray("data")
             mutableListOf<FootballLiveModel>().apply {
                 for (index in 0 until data.length()) {
