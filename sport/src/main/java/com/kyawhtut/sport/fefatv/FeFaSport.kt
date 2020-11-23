@@ -3,7 +3,8 @@ package com.kyawhtut.sport.fefatv
 import com.kyawhtut.sport.Utils
 import com.kyawhtut.sport.fefatv.`object`.FeFaCategory
 import com.kyawhtut.sport.fefatv.`object`.FeFaModel
-import com.kyawhtut.sport.fefatv.`object`.FeFaRequest.Companion.getChannelByCID
+import com.kyawhtut.sport.fefatv.`object`.FeFaRequest.Companion.getHighlightChannels
+import com.kyawhtut.sport.fefatv.`object`.FeFaRequest.Companion.getLatestChannels
 import com.kyawhtut.sport.fefatv.`object`.FeFaRequest.Companion.homeData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,7 +17,7 @@ import org.jsoup.Jsoup
  */
 object FeFaSport {
 
-    private const val BASE_URL = "https://dashboard.burmatv.net/api.php"
+    private const val BASE_URL = "https://dashboard-v3.burmatv.net/api.php"
 
     private suspend fun getCategoryID(isLive: Boolean): String {
         return withContext(Dispatchers.IO) {
@@ -38,10 +39,9 @@ object FeFaSport {
     suspend fun getLiveSport(page: Int = 1): List<FeFaModel> {
         return withContext(Dispatchers.IO) {
             try {
-                val categoryID = getCategoryID(true)
                 val data = Jsoup.connect(BASE_URL)
                     .userAgent("Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36")
-                    .data("data", getChannelByCID(categoryID, "$page"))
+                    .data("data", getLatestChannels(page))
                     .ignoreContentType(true)
                     .sslSocketFactory(Utils.socketFactory)
                     .post()
@@ -55,10 +55,9 @@ object FeFaSport {
     suspend fun getHighlightSport(page: Int = 1): List<FeFaModel> {
         return withContext(Dispatchers.IO) {
             try {
-                val categoryID = getCategoryID(false)
                 val data = Jsoup.connect(BASE_URL)
                     .userAgent("Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36")
-                    .data("data", getChannelByCID(categoryID, "$page"))
+                    .data("data", getHighlightChannels(page))
                     .ignoreContentType(true)
                     .sslSocketFactory(Utils.socketFactory)
                     .post()

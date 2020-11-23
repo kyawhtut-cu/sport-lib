@@ -35,6 +35,16 @@ internal class FeFaRequest {
                 "method_name" to "get_home"
             )
 
+        fun getHighlightChannels(page: Int): String = getData(
+            "method_name" to "get_highlight_channels",
+            "page" to "$page"
+        )
+
+        fun getLatestChannels(page: Int): String = getData(
+            "method_name" to "get_latest_channels",
+            "page" to "$page"
+        )
+
         fun getChannelByCID(cID: String, page: String): String = getData(
             "method_name" to "get_channels_by_cat_id",
             "cat_id" to cID,

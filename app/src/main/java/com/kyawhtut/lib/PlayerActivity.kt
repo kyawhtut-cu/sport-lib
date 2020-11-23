@@ -103,6 +103,11 @@ class PlayerActivity : AppCompatActivity(R.layout.activity_player) {
         ).apply {
             //fixme : for volla sport
 //            _customHeader.forEach {
+
+            /*defaultRequestProperties.set(
+                "Referer",
+                "https://www.aiscore.com/basketball/match-nanjing-monkey-king-qingdao-eagles/j374ws3yj8rsgko"
+            )*/
 //                defaultRequestProperties.set(it.first, it.second)
 //            }
         }
